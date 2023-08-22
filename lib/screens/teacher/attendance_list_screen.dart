@@ -4,8 +4,9 @@ import 'dart:convert';
 
 class AttendanceListScreen extends StatefulWidget {
   final String courseId;
+  final String teacherNidn;
 
-  AttendanceListScreen({required this.courseId});
+  AttendanceListScreen({required this.courseId, required this.teacherNidn});
 
   @override
   _AttendanceListScreenState createState() => _AttendanceListScreenState();
