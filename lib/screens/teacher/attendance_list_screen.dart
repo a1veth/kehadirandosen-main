@@ -23,7 +23,7 @@ class _AttendanceListScreenState extends State<AttendanceListScreen> {
 
   Future<void> fetchAttendanceList() async {
     final response = await http.get(
-      Uri.parse('YOUR_API_ENDPOINT_HERE/courses/${widget.courseId}/attendance'),
+      Uri.parse('../attendances/${widget.courseId}/mark'),
     );
 
     if (response.statusCode == 200) {
@@ -32,7 +32,21 @@ class _AttendanceListScreenState extends State<AttendanceListScreen> {
         attendanceList = data;
       });
     } else {
-      // Handle error
+      showDialog(
+        context: context,
+        builder: (context) => AlertDialog(
+          title: Text('Error'),
+          content: Text('An unexpected error occurred.'),
+          actions: [
+            TextButton(
+              onPressed: () {
+                Navigator.pop(context);
+              },
+              child: Text('OK'),
+            ),
+          ],
+        ),
+      );
     }
   }
 

@@ -23,7 +23,7 @@ class _CourseDetailsScreenState extends State<CourseDetailsScreen> {
 
   Future<void> fetchCourseDetails() async {
     final response = await http.get(
-      Uri.parse('YOUR_API_ENDPOINT_HERE/courses/${widget.courseId}'),
+      Uri.parse('../courses/${widget.courseId}'),
     );
 
     if (response.statusCode == 200) {
@@ -32,7 +32,21 @@ class _CourseDetailsScreenState extends State<CourseDetailsScreen> {
         courseData = data;
       });
     } else {
-      // Handle error
+      showDialog(
+        context: context,
+        builder: (context) => AlertDialog(
+          title: Text('Error'),
+          content: Text('An unexpected error occurred.'),
+          actions: [
+            TextButton(
+              onPressed: () {
+                Navigator.pop(context);
+              },
+              child: Text('OK'),
+            ),
+          ],
+        ),
+      );
     }
   }
 
@@ -52,14 +66,9 @@ class _CourseDetailsScreenState extends State<CourseDetailsScreen> {
               'Course Name: ${courseData['course_name']}',
               style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
             ),
-            SizedBox(height: 8),
-            Text('Teacher: ${courseData['teacher']['name']}'),
-            // Display other course details here
             SizedBox(height: 16),
-
-            Text('Start Time: ${courseData['schedule']['start_time']}'),
-            Text('End Time: ${courseData['schedule']['end_time']}'),
-            Text('Weekday: ${courseData['schedule']['weekday']}'),
+            Text('${courseData['schedule']['weekday']}, ${courseData['schedule']['start_time']}-${courseData['schedule']['end_time']}'),
+            Text('${courseData['teacher']['name']}'),
 
             ElevatedButton(
               onPressed: () {

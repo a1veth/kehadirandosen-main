@@ -1,24 +1,64 @@
 import 'package:flutter/material.dart';
-import 'package:http/http.dart' as http;
 import 'package:qr_flutter/qr_flutter.dart';
-import 'dart:convert';
+import 'package:intl/intl.dart';
+import 'package:http/http.dart' as http;
 
-class QrGenerateScreen extends StatefulWidget {
+class QRGenerateScreen extends StatefulWidget {
   final String courseId;
-  final String qrCodeData;
   final String teacherNidn;
 
-  QrGenerateScreen({
-    required this.courseId,
-    required this.qrCodeData,
-    required this.teacherNidn,
-  });
+  QRGenerateScreen({required this.courseId, required this.teacherNidn});
 
   @override
-  _QrGenerateScreenState createState() => _QrGenerateScreenState();
+  _QRGenerateScreenState createState() => _QRGenerateScreenState();
 }
 
-class _QrGenerateScreenState extends State<QrGenerateScreen> {
+class _QRGenerateScreenState extends State<QRGenerateScreen> {
+  bool qrCodeActive = false;
+  String qrCodeData = '';
+
+  @override
+  void initState() {
+    super.initState();
+    generateQRCode();
+  }
+
+  Future<void> generateQRCode() async {
+    String currentDate = DateFormat('yyyy-MM-dd HH:mm:ss').format(DateTime.now());
+    qrCodeData = '${widget.courseId}-${widget.teacherNidn}-$currentDate';
+    setState(() {
+      qrCodeActive = true;
+    });
+
+    final response = await http.post(
+      Uri.parse('..'),
+      body: {
+        'qrCodeData': qrCodeData,
+        'course_id': widget.courseId,
+      },
+    );
+
+    if (response.statusCode == 200) {
+      // Successfully posted QR code data
+    } else {
+      showDialog(
+        context: context,
+        builder: (context) => AlertDialog(
+          title: Text('Error'),
+          content: Text('An unexpected error occurred.'),
+          actions: [
+            TextButton(
+              onPressed: () {
+                Navigator.pop(context);
+              },
+              child: Text('OK'),
+            ),
+          ],
+        ),
+      );
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -29,13 +69,17 @@ class _QrGenerateScreenState extends State<QrGenerateScreen> {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            QrImageView(
-              data: widget.qrCodeData,
-              version: QrVersions.auto,
-              size: 200.0,
+            if (qrCodeActive)
+              QrImageView(
+                data: qrCodeData,
+                size: 200,
+              ),
+            SizedBox(height: 20),
+            Text(
+              qrCodeActive
+                  ? 'QR Code ready to scan'
+                  : 'Generating QR Code...',
             ),
-            SizedBox(height: 16.0),
-            Text('Scan this QR code for attendance'),
           ],
         ),
       ),

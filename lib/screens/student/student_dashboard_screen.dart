@@ -24,7 +24,7 @@ class _StudentDashboardScreenState extends State<StudentDashboardScreen> {
 
   Future<void> fetchEnrolledCourses() async {
     final response = await http.get(
-      Uri.parse('YOUR_API_ENDPOINT_HERE/students/${widget.studentNim}/courses'),
+      Uri.parse('../students/${widget.studentNim}/courses'),
     );
 
     if (response.statusCode == 200) {
@@ -33,7 +33,21 @@ class _StudentDashboardScreenState extends State<StudentDashboardScreen> {
         enrolledCourses = data;
       });
     } else {
-      // Handle error
+      showDialog(
+        context: context,
+        builder: (context) => AlertDialog(
+          title: Text('Error'),
+          content: Text('An unexpected error occurred.'),
+          actions: [
+            TextButton(
+              onPressed: () {
+                Navigator.pop(context);
+              },
+              child: Text('OK'),
+            ),
+          ],
+        ),
+      );
     }
   }
 
@@ -57,7 +71,10 @@ class _StudentDashboardScreenState extends State<StudentDashboardScreen> {
                     Navigator.push(
                       context,
                       MaterialPageRoute(
-                        builder: (context) => QRScanScreen(studentNim: widget.studentNim), // Navigate to QR scan screen
+                        builder: (context) => QRScanScreen(
+                            studentNim: widget.studentNim,
+                            courseId: enrolledCourses[index]['id']
+                        ), // Navigate to QR scan screen
                       ),
                     );
                   },

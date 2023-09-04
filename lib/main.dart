@@ -24,7 +24,7 @@ class _LoginScreenState extends State<LoginScreen> {
     final String password = passwordController.text;
 
     final response = await http.post(
-      Uri.parse('YOUR_LOGIN_API_ENDPOINT_HERE'),
+      Uri.parse('http://localhost:8080/api/login'),
       body: {
         'username': username,
         'password': password,
@@ -47,19 +47,49 @@ class _LoginScreenState extends State<LoginScreen> {
         );
       } else if (role == 'teacher') {
         String teacherNidn = data['teacher_nidn'];
+        String teacherName = data['name'];
         Navigator.pushReplacement(
           context,
           MaterialPageRoute(
             builder: (context) => TeacherDashboardScreen(
               teacherNidn: teacherNidn,
+              teacherName: teacherName,
             ),
           ),
         );
       } else {
-        // Handle unknown role
+        showDialog(
+          context: context,
+          builder: (context) => AlertDialog(
+            title: Text('Unknown Role'),
+            content: Text("Login Failed."),
+            actions: [
+              TextButton(
+                onPressed: () {
+                  Navigator.pop(context);
+                },
+                child: Text('OK'),
+              ),
+            ],
+          ),
+        );
       }
     } else {
-      // Handle login error
+      showDialog(
+        context: context,
+        builder: (context) => AlertDialog(
+          title: Text('Login Failed'),
+          content: Text('Incorrect username or password.'),
+          actions: [
+            TextButton(
+              onPressed: () {
+                Navigator.pop(context);
+              },
+              child: Text('OK'),
+            ),
+          ],
+        ),
+      );
     }
   }
 

@@ -6,36 +6,49 @@ import 'qr_generate_screen.dart';
 
 class TeacherDashboardScreen extends StatefulWidget {
   final String teacherNidn;
+  final String teacherName;
 
-  TeacherDashboardScreen({required this.teacherNidn});
+  TeacherDashboardScreen({required this.teacherNidn, required this.teacherName});
 
   @override
   _TeacherDashboardScreenState createState() => _TeacherDashboardScreenState();
 }
 
 class _TeacherDashboardScreenState extends State<TeacherDashboardScreen> {
-  String courseId = '';
-  String qrCodeData = '';
+  List<dynamic> enrolledCourses = [];
 
   @override
   void initState() {
     super.initState();
-    fetchCourseData();
+    fetchEnrolledCourses();
   }
 
-  Future<void> fetchCourseData() async {
+  Future<void> fetchEnrolledCourses() async {
     final response = await http.get(
-      Uri.parse('YOUR_COURSE_API_ENDPOINT_HERE'), // Replace with actual API endpoint
+      Uri.parse('../teachers/${widget.teacherNidn}/courses'),
     );
 
     if (response.statusCode == 200) {
-      final courseData = json.decode(response.body);
+      final data = json.decode(response.body);
       setState(() {
-        courseId = courseData['course_id'];
-        qrCodeData = courseData['qr_code_data'];
+        enrolledCourses = data;
       });
     } else {
-      // Handle error
+      showDialog(
+        context: context,
+        builder: (context) => AlertDialog(
+          title: Text('Error'),
+          content: Text('An unexpected error occurred.'),
+          actions: [
+            TextButton(
+              onPressed: () {
+                Navigator.pop(context);
+              },
+              child: Text('OK'),
+            ),
+          ],
+        ),
+      );
     }
   }
 
@@ -50,49 +63,61 @@ class _TeacherDashboardScreenState extends State<TeacherDashboardScreen> {
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
             Text(
-              'Welcome, Teacher!',
+              'Welcome, ${widget.teacherName}!',
               style: TextStyle(fontSize: 20),
             ),
-            SizedBox(height: 20),
-            Text(
-              'NIDN: ${widget.teacherNidn}',
-              style: TextStyle(fontSize: 16),
-            ),
-            SizedBox(height: 20),
-            courseId.isNotEmpty
-                ? ElevatedButton(
-              onPressed: () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                    builder: (context) => AttendanceListScreen(
-                      courseId: courseId,
-                      teacherNidn: widget.teacherNidn,
+            for (var course in enrolledCourses)
+              Column(
+                children: [
+                  GestureDetector(
+                    onTap: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => QRGenerateScreen(
+                            courseId: course['courseId'],
+                            teacherNidn: widget.teacherNidn,
+                          ),
+                        ),
+                      );
+                    },
+                    child: Text(
+                      '${course['courseName']}',
+                      style: TextStyle(decoration: TextDecoration.underline, color: Colors.blue),
                     ),
                   ),
-                );
-              },
-              child: Text('View Attendance'),
-            )
-                : CircularProgressIndicator(),
-            SizedBox(height: 20),
-            qrCodeData.isNotEmpty
-                ? ElevatedButton(
-              onPressed: () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                    builder: (context) => QrGenerateScreen(
-                      courseId: courseId,
-                      qrCodeData: qrCodeData,
-                      teacherNidn: widget.teacherNidn,
-                    ),
+                  ElevatedButton.icon(
+                    onPressed: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => QRGenerateScreen(
+                            courseId: course['courseId'],
+                            teacherNidn: widget.teacherNidn,
+                          ),
+                        ),
+                      );
+                    },
+                    icon: Icon(Icons.qr_code),
+                    label: Text('Generate QR Code'),
                   ),
-                );
-              },
-              child: Text('Generate QR Code'),
-            )
-                : CircularProgressIndicator(),
+                  ElevatedButton(
+                    onPressed: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => AttendanceListScreen(
+                            courseId: course['courseId'],
+                            teacherNidn: widget.teacherNidn,
+                          ),
+                        ),
+                      );
+                    },
+                    child: Text('View Attendances'),
+                  ),
+                ],
+              ),
+
           ],
         ),
       ),
