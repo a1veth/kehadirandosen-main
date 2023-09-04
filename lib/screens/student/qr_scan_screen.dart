@@ -52,8 +52,6 @@ class _QRScanScreenState extends State<QRScanScreen> {
         ),
       );
     } else if (response.statusCode == 400) {
-      // Handle the case where the server responds with a 400 status code,
-      // indicating that the attendance has already been marked.
       final data = json.decode(response.body);
       final errorMessage = data['error']; // Retrieve the error message from the server.
 
