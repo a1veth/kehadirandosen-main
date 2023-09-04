@@ -24,7 +24,7 @@ class _StudentDashboardScreenState extends State<StudentDashboardScreen> {
 
   Future<void> fetchEnrolledCourses() async {
     final response = await http.get(
-      Uri.parse('../students/${widget.studentNim}/courses'),
+      Uri.parse('http://localhost:8080/students/${widget.studentNim}/courses'),
     );
 
     if (response.statusCode == 200) {

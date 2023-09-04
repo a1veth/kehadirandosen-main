@@ -23,7 +23,7 @@ class _CourseDetailsScreenState extends State<CourseDetailsScreen> {
 
   Future<void> fetchCourseDetails() async {
     final response = await http.get(
-      Uri.parse('../courses/${widget.courseId}'),
+      Uri.parse('http://localhost:8080/api/course-details/${widget.courseId}'),
     );
 
     if (response.statusCode == 200) {

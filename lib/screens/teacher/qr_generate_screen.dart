@@ -31,7 +31,7 @@ class _QRGenerateScreenState extends State<QRGenerateScreen> {
     });
 
     final response = await http.post(
-      Uri.parse('..'),
+      Uri.parse('http://localhost:8080/api/generate-qr-code'),
       body: {
         'qrCodeData': qrCodeData,
         'course_id': widget.courseId,

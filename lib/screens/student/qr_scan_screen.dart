@@ -25,12 +25,11 @@ class _QRScanScreenState extends State<QRScanScreen> {
 
   Future<void> markAttendance(String qrCodeData) async {
     final response = await http.post(
-      Uri.parse('http://localhost:8080/attendance/mark'),
+      Uri.parse('http://localhost:8080/api/scan-qr-code'),
       body: {
         'qr_code_data': qrCodeData,
         'course_id': widget.courseId,
         'student_nim': widget.studentNim,
-        'status': 'marked',
         'attendance_date': DateTime.now().toString(),
       },
     );
