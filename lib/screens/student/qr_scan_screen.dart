@@ -103,3 +103,5 @@ class _QRScanScreenState extends State<QRScanScreen> {
     );
   }
 }
+
+// test
