@@ -67,7 +67,7 @@ class _CourseDetailsScreenState extends State<CourseDetailsScreen> {
               style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
             ),
             SizedBox(height: 16),
-            Text('${courseData['schedule']['weekday']}, ${courseData['schedule']['start_time']}-${courseData['schedule']['end_time']}'),
+            Text('${courseData['schedule']['weekday']}, ${courseData['schedule']['start_time']}-${courseData['schedule']['end_time']} WIB'),
             Text('${courseData['teacher']['name']}'),
 
             ElevatedButton(

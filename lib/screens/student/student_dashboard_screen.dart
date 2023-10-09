@@ -82,7 +82,7 @@ class _StudentDashboardScreenState extends State<StudentDashboardScreen> {
               ],
             ),
             subtitle:
-            Text('Teacher: ${enrolledCourses[index]['teacher']['name']}'),
+            Text('Course Details'),
             onTap: () {
               Navigator.push(
                 context,

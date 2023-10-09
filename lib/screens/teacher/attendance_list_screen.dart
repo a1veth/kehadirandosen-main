@@ -23,7 +23,7 @@ class _AttendanceListScreenState extends State<AttendanceListScreen> {
 
   Future<void> fetchAttendanceList() async {
     final response = await http.get(
-      Uri.parse('http:/localhost:8080/api/attendance-list/${widget.courseId}'),
+      Uri.parse('http://localhost:8080/api/attendance-list/${widget.courseId}'),
     );
 
     if (response.statusCode == 200) {
@@ -61,11 +61,11 @@ class _AttendanceListScreenState extends State<AttendanceListScreen> {
         itemCount: attendanceList.length,
         itemBuilder: (context, index) {
           return ListTile(
-            title: Text(attendanceList[index]['student']['name']),
+            title: Text(attendanceList[index]['student_name']),
             subtitle: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text('NIM: ${attendanceList[index]['student']['nim']}'),
+                Text('NIM: ${attendanceList[index]['student_nim']}'),
                 Text('Status: ${attendanceList[index]['status']}'),
                 Text('Date: ${attendanceList[index]['attendance_date']}'), // Display attendance date
               ],

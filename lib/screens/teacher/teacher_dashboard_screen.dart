@@ -58,68 +58,48 @@ class _TeacherDashboardScreenState extends State<TeacherDashboardScreen> {
       appBar: AppBar(
         title: Text('Teacher Dashboard'),
       ),
-      body: Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Text(
-              'Welcome, ${widget.teacherName}!',
-              style: TextStyle(fontSize: 20),
+      body: enrolledCourses.isNotEmpty
+          ? ListView.builder(
+        itemCount: enrolledCourses.length,
+        itemBuilder: (context, index) {
+          return ListTile(
+            title: Row(
+              children: [
+                Text(enrolledCourses[index]['course_name']),
+                IconButton(
+                  icon: Icon(Icons.qr_code),
+                  onPressed: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => QRGenerateScreen(
+                            teacherNidn: widget.teacherNidn,
+                            courseId: enrolledCourses[index]['id']
+                        ), // Navigate to QR scan screen
+                      ),
+                    );
+                  },
+                ),
+              ],
             ),
-            for (var course in enrolledCourses)
-              Column(
-                children: [
-                  GestureDetector(
-                    onTap: () {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                          builder: (context) => QRGenerateScreen(
-                            courseId: course['courseId'],
-                            teacherNidn: widget.teacherNidn,
-                          ),
-                        ),
-                      );
-                    },
-                    child: Text(
-                      '${course['courseName']}',
-                      style: TextStyle(decoration: TextDecoration.underline, color: Colors.blue),
-                    ),
+            subtitle:
+            Text('Course Details'),
+            onTap: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => AttendanceListScreen(
+                    courseId: enrolledCourses[index]['id'],
+                    teacherNidn: widget.teacherNidn,
                   ),
-                  ElevatedButton.icon(
-                    onPressed: () {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                          builder: (context) => QRGenerateScreen(
-                            courseId: course['courseId'],
-                            teacherNidn: widget.teacherNidn,
-                          ),
-                        ),
-                      );
-                    },
-                    icon: Icon(Icons.qr_code),
-                    label: Text('Generate QR Code'),
-                  ),
-                  ElevatedButton(
-                    onPressed: () {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                          builder: (context) => AttendanceListScreen(
-                            courseId: course['courseId'],
-                            teacherNidn: widget.teacherNidn,
-                          ),
-                        ),
-                      );
-                    },
-                    child: Text('View Attendances'),
-                  ),
-                ],
-              ),
-
-          ],
-        ),
+                ),
+              );
+            },
+          );
+        },
+      )
+          : Center(
+        child: CircularProgressIndicator(),
       ),
     );
   }
