@@ -59,6 +59,35 @@ class _QRGenerateScreenState extends State<QRGenerateScreen> {
     }
   }
 
+  Future<void> deleteQRCodeData() async {
+    final response = await http.delete(
+      Uri.parse('http://localhost:8080/api/delete-qr-code/${widget.courseId}'),
+    );
+
+    if (response.statusCode == 200) {
+      // Successfully deleted QR code data
+      setState(() {
+        qrCodeActive = false;
+      });
+    } else {
+      showDialog(
+        context: context,
+        builder: (context) => AlertDialog(
+          title: Text('Error'),
+          content: Text('Failed to delete QR code data from the server.'),
+          actions: [
+            TextButton(
+              onPressed: () {
+                Navigator.pop(context);
+              },
+              child: Text('OK'),
+            ),
+          ],
+        ),
+      );
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -80,11 +109,14 @@ class _QRGenerateScreenState extends State<QRGenerateScreen> {
                   ? 'QR Code ready to scan'
                   : 'Generating QR Code...',
             ),
+            if (qrCodeActive)
+              ElevatedButton(
+                onPressed: deleteQRCodeData,
+                child: Text('Close QR Code'),
+              ),
           ],
         ),
       ),
     );
   }
 }
-
-// test

@@ -30,7 +30,6 @@ class _QRScanScreenState extends State<QRScanScreen> {
         'qr_code_data': qrCodeData,
         'course_id': widget.courseId,
         'student_nim': widget.studentNim,
-        'attendance_date': DateTime.now().toString(),
       },
     );
 
